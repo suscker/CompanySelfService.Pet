@@ -24,7 +24,7 @@ internal class CreateUserCommandHandler : IRequestHandler<CreateUserCommand, Use
     {
         User user = new()
         {
-            Id = Guid.NewGuid(),
+            Id = Guid.CreateVersion7(),
             FirstName = request.Name,
             LastName = request.LastName,
             Email = request.Email,

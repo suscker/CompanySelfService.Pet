@@ -27,8 +27,6 @@ public class UserController : ControllerBase
     {
         var command = new CreateUserCommand(dto.Name, dto.LastName, dto.Email, dto.Password, dto.Role);
 
-        if (command is null) return BadRequest();
-
         var user = await _mediator.Send(command);
 
 

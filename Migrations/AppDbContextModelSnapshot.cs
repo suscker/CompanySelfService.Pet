@@ -22,6 +22,63 @@ namespace CompanySelfService.Pet.Migrations
 
             NpgsqlModelBuilderExtensions.UseIdentityByDefaultColumns(modelBuilder);
 
+            modelBuilder.Entity("CompanySelfService.Pet.Models.AccessPass", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uuid");
+
+                    b.Property<Guid>("BuildingObjectId")
+                        .HasColumnType("uuid");
+
+                    b.Property<bool>("IsActive")
+                        .HasColumnType("boolean");
+
+                    b.Property<DateTimeOffset>("IssuedAt")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.Property<Guid>("IssuedByUserId")
+                        .HasColumnType("uuid");
+
+                    b.Property<DateTimeOffset?>("RevokedAt")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.Property<Guid>("UserId")
+                        .HasColumnType("uuid");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("BuildingObjectId");
+
+                    b.HasIndex("IssuedByUserId");
+
+                    b.HasIndex("UserId");
+
+                    b.ToTable("AccessPasses");
+                });
+
+            modelBuilder.Entity("CompanySelfService.Pet.Models.BuildingObject", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uuid");
+
+                    b.Property<string>("Address")
+                        .IsRequired()
+                        .HasColumnType("text");
+
+                    b.Property<DateTimeOffset>("CreatedAt")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.Property<string>("Name")
+                        .IsRequired()
+                        .HasColumnType("text");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("BuildingObjects");
+                });
+
             modelBuilder.Entity("CompanySelfService.Pet.Models.User", b =>
                 {
                     b.Property<Guid>("Id")
@@ -47,9 +104,50 @@ namespace CompanySelfService.Pet.Migrations
                         .IsRequired()
                         .HasColumnType("text");
 
+                    b.Property<string>("Role")
+                        .IsRequired()
+                        .HasColumnType("text");
+
                     b.HasKey("Id");
 
                     b.ToTable("Users");
+                });
+
+            modelBuilder.Entity("CompanySelfService.Pet.Models.AccessPass", b =>
+                {
+                    b.HasOne("CompanySelfService.Pet.Models.BuildingObject", "BuildingObject")
+                        .WithMany("Passes")
+                        .HasForeignKey("BuildingObjectId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("CompanySelfService.Pet.Models.User", "IssuedBy")
+                        .WithMany()
+                        .HasForeignKey("IssuedByUserId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+
+                    b.HasOne("CompanySelfService.Pet.Models.User", "User")
+                        .WithMany("Passes")
+                        .HasForeignKey("UserId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("BuildingObject");
+
+                    b.Navigation("IssuedBy");
+
+                    b.Navigation("User");
+                });
+
+            modelBuilder.Entity("CompanySelfService.Pet.Models.BuildingObject", b =>
+                {
+                    b.Navigation("Passes");
+                });
+
+            modelBuilder.Entity("CompanySelfService.Pet.Models.User", b =>
+                {
+                    b.Navigation("Passes");
                 });
 #pragma warning restore 612, 618
         }

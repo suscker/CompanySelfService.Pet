@@ -6,6 +6,7 @@ using System.Text;
 using CompanySelfService.Pet.Models;
 using MediatR;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Options;
 using Microsoft.IdentityModel.Tokens;
 
 namespace CompanySelfService.Pet.Users.Commands;
@@ -14,10 +15,12 @@ internal class LoginCommandHandler : IRequestHandler<LoginCommand, String>
 {
 
     private readonly AppDbContext _context;
+    private readonly JwtSettings _jwtSettings;
     
-    public LoginCommandHandler(AppDbContext db)
+    public LoginCommandHandler(AppDbContext db, IOptions<JwtSettings> jwtSettings)
     {
         _context = db;
+        _jwtSettings = jwtSettings.Value;
     }
     private string HashPassword(string password)
     {
@@ -40,14 +43,14 @@ internal class LoginCommandHandler : IRequestHandler<LoginCommand, String>
             new Claim(ClaimTypes.Role, user.Role)
         };
 
-        var key = new SymmetricSecurityKey(Encoding.UTF8.GetBytes("SuperSecretSecureKey12345678901234567890"));
+        var key = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(_jwtSettings.Secret));
         var creds = new SigningCredentials(key, SecurityAlgorithms.HmacSha256);
 
         var token = new JwtSecurityToken(
             issuer: "CompanySelfService",
             audience: "CompanySelfService.Clients",
             claims: claims,
-            expires: DateTime.Now.AddHours(1),
+            expires: DateTime.UtcNow.AddMinutes(_jwtSettings.ExpiryInMinutes),
             signingCredentials: creds
         );
 
