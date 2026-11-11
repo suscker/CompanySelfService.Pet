@@ -1,0 +1,6 @@
+@CompanySelfService.Pet_HostAddress = http://localhost:5194
+
+GET {{CompanySelfService.Pet_HostAddress}}/weatherforecast/
+Accept: application/json
+
+###

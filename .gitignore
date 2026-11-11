@@ -1,0 +1,36 @@
+## ---------- .NET / C# ----------
+# Папки компиляции и сборки
+bin/
+obj/
+/AppBundle/
+/PublishOutputs/
+
+# Файлы конфигурации пользователя и secrets
+appsettings.Development.json
+appsettings.local.json
+UserSecrets/
+.microsoft.dotnet.secretmanager.list.txt
+
+## ---------- Редакторы кода ----------
+# Настройки VS Code
+.vscode/
+!.vscode/extensions.json
+.history/
+*.code-workspace
+
+# Настройки Visual Studio / Rider
+.vs/
+*.user
+*.userosscache
+*.sln.docstates
+.idea/
+
+## ---------- Инфраструктура / Docker ----------
+# Локальные базы данных (если вдруг решишь запустить SQLite)
+*.db
+*.db-journal
+*.db-shm
+*.db-wal
+
+# Локальные логи и кэш Docker
+.dockerignore

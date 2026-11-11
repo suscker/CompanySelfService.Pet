@@ -1,0 +1,33 @@
+version: '3.8'
+
+services:
+  postgres_db:
+    image: postgres:16-alpine
+    container_name: pet_postgres_container
+    restart: always
+    environment:
+      POSTGRES_USER: my_db_user
+      POSTGRES_PASSWORD: my_secure_password
+      POSTGRES_DB: pet_service_db
+    ports:
+      - "5432:5432"
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+
+  web_api:
+    image: pet_web_api_image:latest
+    container_name: pet_api_container
+    build:
+      context: .
+      dockerfile: Dockerfile
+    restart: always
+    ports:
+      - "8080:8080"
+    environment:
+      - ASPNETCORE_ENVIRONMENT=Development
+      - ConnectionStrings__DefaultConnection=Host=postgres_db;Port=5432;Database=pet_service_db;Username=my_db_user;Password=my_secure_password
+    depends_on:
+      - postgres_db
+
+volumes:
+  postgres_data:
